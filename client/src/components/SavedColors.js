@@ -14,15 +14,15 @@ const SavedColors = props => {
             //   onClick={() => editColor(color)}
           >
             <span>
-              <span
-                className="delete"
-                //   onClick={e => {
-                //     e.stopPropagation();
-                //     deleteColor(color);
-                //   }}
-              >
-                x
-              </span>{" "}
+              {/* <span
+              className="delete"
+                onClick={e => {
+                  e.stopPropagation();
+                  deleteColor(color);
+                }}
+            >
+              x
+            </span>{" "} */}
               {color.color}
             </span>
             <div
