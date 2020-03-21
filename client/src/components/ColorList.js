@@ -7,8 +7,11 @@ const initialColor = {
   code: { hex: "" }
 };
 
-const ColorList = ({ colors, updateColors }) => {
+const ColorList = ({ colors, updateColors, setSavedColors, savedColors }) => {
   console.log("COLORS LIST", colors);
+  console.log("SAVED COLORS", savedColors);
+  //   console.log("UPDATE COLORS", updateColors);
+  //   console.log("SET SAVED COLORS", setSavedColors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -22,21 +25,43 @@ const ColorList = ({ colors, updateColors }) => {
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
+
+    const color = colors.find(c => colorToEdit.code.hex === c.code.hex);
+    axiosWithAuth()
+      // Must have two arguments
+      .put(`/api/colors/${color.id}`, colorToEdit)
+      .then(res => {
+        console.log("SAVE EDIT", res.data);
+        setSavedColors([...savedColors, res.data]);
+      })
+      .catch(err => console.log("SAVE EDIT ERROR:", err));
+
+    setSavedColors(
+      colors.filter(item => {
+        return item.id !== color.id;
+      })
+    );
   };
 
+  // Clicking on the red X will remove the color from the list and rerender the list with updateColors function
   //   const deleteColor = color => {
-  const deleteColor = id => {
-    console.log("DELETE COLOR ID:", id);
+  const deleteColor = color => {
+    console.log("DELETE COLOR ID:", color);
     // make a delete request to delete this color
-    // axios
-    //   .delete(`localhost:5000/api/colors/${id}`)
     axiosWithAuth()
-      .delete(`/api/colors/${id}`)
+      .delete(`/api/colors/${color.id}`)
       .then(res => {
-        console.log("DELETE COLOR:", res.data);
-        console.log("UPDATE COLORS", updateColors);
+        setEditing(false);
+        console.log("DELETE COLOR:", res);
       })
       .catch(err => console.log("DELETE COLOR ERR:", err));
+
+    // Need to update the color list
+    updateColors(
+      colors.filter(item => {
+        return item.id !== color.id;
+      })
+    );
   };
 
   return (
